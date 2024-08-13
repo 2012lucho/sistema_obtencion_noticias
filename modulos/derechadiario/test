@@ -1,0 +1,2 @@
+python get_data.py --ruta_config "/media/debian/Datos 2/sistema_obtencion_noticias/modulos/config.json" 
+--ruta_categorias "/media/debian/Datos 2/sistema_obtencion_noticias/modulos/derechadiario/categorias.json"
