@@ -10,7 +10,8 @@ sys.path.insert(1, "../../modulos")
 from clientecoordinador import *
 cliente = ClienteCoordinador()
 
-ID_DIARIO = 1
+ID_DIARIO = 2
+BASE_URL  = "https://www.clarin.com"
 
 fecha = datetime.datetime.now().strftime("%Y%m%d")
 
@@ -27,8 +28,8 @@ def procesar_elementos( url, cat_id, categoria ):
     
     response = requests.get(url, headers=headers_, timeout=10)
     soup = BeautifulSoup(response.text, 'html.parser')
-    
-    elementos = soup.find(class_='blog__content').find_all("article")
+
+    elementos = soup.find_all("article")
 
     listado_noticias = []
 
@@ -36,7 +37,7 @@ def procesar_elementos( url, cat_id, categoria ):
         html_data = BeautifulSoup(str(elemento.contents), 'html.parser')
         try:
             nota = {
-                "enlace": html_data.find("a").get("href"),
+                "enlace": BASE_URL + html_data.find("a").get("href"),
                 "category": cat_id,
                 "id_diario": ID_DIARIO,
             }
@@ -46,8 +47,8 @@ def procesar_elementos( url, cat_id, categoria ):
             response_esp = requests.get(nota["enlace"], headers=headers_, timeout=10)
             soup_esp = BeautifulSoup(response_esp.text, 'html.parser')
 
-            nota["titulo"] = soup_esp.find(class_="single-post__entry-title").text
-            nota["contenido"] = soup_esp.find(class_="entry__article-wrap").decode_contents()
+            nota["titulo"] = soup_esp.find(class_="storyTitle").text
+            nota["contenido"] = soup_esp.find(class_="NewsContainer").decode_contents()
             
             listado_noticias.append(nota)
 
@@ -58,6 +59,7 @@ def procesar_elementos( url, cat_id, categoria ):
             print("error, ignorando registro ")
             continue
         print(nota)
+        print("")
         cantidad = cantidad + 1
 
     return cantidad
