@@ -15,6 +15,7 @@ RUTA_CATEGORIAS     = args.ruta_categorias
 RUTA_CONFIG         = args.ruta_config
 
 try:
+    print("Cargando archivo de categorias...", RUTA_CATEGORIAS)
     with open( RUTA_CATEGORIAS ) as archivo_json:
         CATEGORIAS = json.load(archivo_json)
 except:
@@ -35,9 +36,10 @@ class ClienteCoordinador:
         self.conectar()
 
     def conectar(self):
-        self.sio.connect('http://localhost:7777')
+        a = 0
+        #self.sio.connect('http://localhost:7777')
 
-        self.sio.emit('cliente_conectado')
-        if (not self.sio.receive()[1]["status"]):
-            print("Rechazado")
-            exit()
+        #self.sio.emit('cliente_conectado')
+        #if (not self.sio.receive()[1]["status"]):
+        #    print("Rechazado")
+        #    exit()
