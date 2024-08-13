@@ -28,14 +28,32 @@ def procesar_elementos( url, cat_id, categoria ):
     response = requests.get(url, headers=headers_, timeout=10)
     soup = BeautifulSoup(response.text, 'html.parser')
     
-    elementos = soup.find_all("article")
+    elementos = soup.find(class_='blog__content').find_all("article")
+
+    listado_noticias = []
 
     for elemento in elementos:
         html_data = BeautifulSoup(str(elemento.contents), 'html.parser')
         try:
             nota = {
-                "enlace": html_data.find("a").get("href")
+                "enlace": html_data.find("a").get("href"),
+                "category": cat_id,
+                "id_diario": ID_DIARIO,
             }
+
+            print("Haciendo peticion a nota especifica ", nota["enlace"])
+
+            response_esp = requests.get(nota["enlace"], headers=headers_, timeout=10)
+            soup_esp = BeautifulSoup(response_esp.text, 'html.parser')
+
+            nota["titulo"] = soup_esp.find(class_="single-post__entry-title").text
+            nota["contenido"] = soup_esp.find(class_="entry__article-wrap").text
+            
+            listado_noticias.append(nota)
+
+            with open('./resultados/'+fecha+'_'+str(ID_DIARIO)+'.json', 'w') as file:
+                json.dump(listado_noticias, file)
+                print('guardado archivo '+fecha+'_'+str(ID_DIARIO)+'.json')
         except:
             print("error, ignorando registro ")
             continue
